@@ -3,7 +3,9 @@ package com.intropro.academy.kkalashnykova.poputchik;
 import static org.junit.Assert.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +44,7 @@ public class RideListTest {
 		try{
 			rideList.createRide("Grygorenka", "Cristall", date, owner);
 		}
-		catch(PoputchikDomainRideAlreadyExistsException e){
+		catch(PoputchikDomainObjectAlreadyExistsException e){
 			assertNotNull(e);
 		}
 		assertEquals(2, rideList.getRides().size());
@@ -84,7 +86,7 @@ public class RideListTest {
 		rides.createRide("Grishka", "Cristall", date, owner);
 
 		//HOW TO GET NOT SAME DATE		
-		//String z2 = date.toString();
+		//String z2 = date.toString(); 
 		rides.createRide("Cristall", "Grygorenka", date2, owner2);//now fails because two with same start and finish and date could not be created
 		rides.createRide("Grygorenka", "Cristall", date, owner);
 		assertTrue(!rides.getRides().isEmpty());
@@ -92,8 +94,8 @@ public class RideListTest {
 		assertEquals(1, rides.search("Grishka", "Cristall", date, owner).size());
 		assertEquals(1, rides.search("Cristall", "Grygorenka", null, owner2).size());
 		//assertEquals(1, rides.search("Cristall", "Grygorenka", date2, null).size()); //fails because dates are same
-		assertEquals(2, rides.search("Cristall", "Grygorenka", null, null).size());
-		assertEquals(2, rides.search("Cristall", null, null, null).size());
+		assertEquals(2, rides.search("Cristall", "Grygorenka", null, null).size());  
+
 		assertEquals(2, rides.search(null, "Grygorenka", null, null).size());
 		assertEquals(0, rides.search("A", "Cristall", date, owner).size());
 		assertEquals(0, rides.search("Grishka", "B", date, owner).size());
@@ -101,14 +103,44 @@ public class RideListTest {
 		assertEquals(0, rides.search("Grishka", "Cristall", date, owner3).size());
 		assertEquals(rides.getRides().size(), rides.search(null, null, null, null).size());
 		
-		//добавить
-		//поиск по нескольким параметрам (searchParameters) - для этих серч параметров использовать Enum. может и для старт и финиш
-		//enum
-		//в отдельном файле создаем
-		//public enum Weekday{, где вик дей это тип
-		//MON
-		//TUE
-		//} 
+	}
+	
+	@Test
+	public void testSearchRideWithParametrs() {
 		
+		Date date = new Date();
+		Date date2 = new Date();
+		Date date3 = new Date();
+		//String z = date.toString();
+		
+		Profile owner = new Profile();
+		owner.setFirstName("Test1");
+		Profile owner2 = new Profile();
+		owner2.setFirstName("Test2");
+		Profile owner3 = new Profile();
+		owner3.setFirstName("Test3");
+		
+		RideList rides = new RideList();
+		rides.createRide("Cristall", "Grygorenka", date, owner);
+		rides.createRide("Grishka", "Cristall", date, owner);
+
+		//HOW TO GET NOT SAME DATE		
+		//String z2 = date.toString(); 
+		rides.createRide("Cristall", "Grygorenka", date2, owner2);//now fails because two with same start and finish and date could not be created
+		rides.createRide("Grygorenka", "Cristall", date, owner);
+		assertTrue(!rides.getRides().isEmpty());
+		
+		Map <String, Object> searchParameters = new HashMap <String, Object>();
+		searchParameters.put(SearchParameters.start.toString(), "Cristall");
+		assertEquals(2, rides.search(searchParameters).size());
+		
+		searchParameters.put(SearchParameters.finish.toString(), "Grygorenka");
+		assertEquals(2, rides.search(searchParameters).size());
+		
+		searchParameters.put(SearchParameters.finish.toString(), "Grygorenka");
+		assertEquals(2, rides.search(searchParameters).size());
+		
+		searchParameters.put(SearchParameters.owner.toString(), owner2);
+		assertEquals(1, rides.search(searchParameters).size());
 	}	
 }

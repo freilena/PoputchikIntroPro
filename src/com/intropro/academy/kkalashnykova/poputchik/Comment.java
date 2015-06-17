@@ -3,17 +3,13 @@ package com.intropro.academy.kkalashnykova.poputchik;
 import java.util.Date;
 
 public class Comment {
-	
+
 	private Profile owner;
 	private String body = "";
 	private Date dateTime;
-	
-	public void createComment(){
-		
-	}
-	
-	public void viewListOfComments(){
-		
+
+	public void viewListOfComments() {
+
 	}
 
 	public Profile getOwner() {
@@ -39,5 +35,5 @@ public class Comment {
 	public void setDateTime(Date dateTime) {
 		this.dateTime = dateTime;
 	}
-	
+
 }

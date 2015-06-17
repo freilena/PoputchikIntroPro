@@ -11,5 +11,4 @@ public class CommentTest {
 		Comment comment = new Comment();
 		assertNotNull(comment);
 	}
-
 }

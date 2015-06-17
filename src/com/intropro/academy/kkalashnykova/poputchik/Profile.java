@@ -1,15 +1,14 @@
 package com.intropro.academy.kkalashnykova.poputchik;
 
+import java.util.Date;
+import java.util.List;
+
 public class Profile {
 	
 	private String firstName;
 	private String lastName;
 	private String phone;
 	private String email;
-	
-	/*public void updateProfile(){
-		//не нужен. так как есть сетеры
-	}*/
 
 	public String getFirstName() {
 		return firstName;

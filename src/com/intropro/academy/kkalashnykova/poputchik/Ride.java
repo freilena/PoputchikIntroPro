@@ -5,78 +5,101 @@ import java.util.Date;
 import java.util.List;
 
 public class Ride {
-	
+
 	private String start;
 	private String finish;
 	private Date dateTime;
 	private Profile owner;
 	private String status;
-	private List <Comment> comments = new ArrayList<Comment>();
-	private List <Request> requests = new ArrayList<Request>();
-	
-	private Ride(){
-		
+	private List<Comment> comments = new ArrayList<Comment>();
+	private List<Request> requests = new ArrayList<Request>();
+
+	private Ride() {
+
 	}
-	
-	public static Ride createRide(String start, String finish, Date dateTime, Profile owner){   //factory method
+
+	public static Ride createRide(String start, String finish, Date dateTime,
+			Profile owner) { 
 		Ride ride = new Ride();
 		ride.setStart(start);
 		ride.setFinish(finish);
 		ride.setDateTime(dateTime);
 		ride.setOwner(owner);
 		ride.setStatus("active");
-		return ride;		
-		
+		return ride;
+
 	}
-	
-	public Request createRequest(Profile owner){
-		Request request = new Request();
-		request.setOwner(owner);
-		request.setStatus("initial");
-		requests.add(request);
-		return request;
+
+	public Request createRequest(Profile owner) {
+		try{
+			getRequest(owner);
+			}catch (PoputchikDomainObjectDoesnotExistException e){
+				Request request = new Request();
+				request.setOwner(owner);
+				request.setStatus("initial");
+				requests.add(request);
+				return request;
+			}
+		throw new PoputchikDomainObjectAlreadyExistsException();
 	}
-	
-	public boolean deleteRequest(Request request){
-		if(requests.contains(request)){
+
+	public boolean deleteRequest(Request request) {
+		if (requests.contains(request)) {
 			requests.remove(request);
 			return true;
-		}
-		else{
-			//to do some code here
+		} else {
 			return false;
 		}
 	}
-	
-	public Request searchRequest(Profile requestOwner){
-		Request request = null;	
-		for (Request current : requests){
-			if(current.getOwner().equals(requestOwner)){
-				request = current;	
+
+	public Request getRequest(Profile requestOwner) {
+		Request result = null;
+		for (Request current : requests) {
+			if (current.getOwner().equals(requestOwner)) {
+				result = current;
 				break;
 			}
 		}
-		if(request != null){
-			return request;
-		}
-		else{
+		if (result == null) {
 			throw new PoputchikDomainObjectDoesnotExistException();
 		}
+		return result;
 	}
 	
-	// нужен ли такой метод? или просто где-то в коде будет вызываться серч и потом сеттер? как правильно?
-	// ?????????????????????
-	public void confirmRequest(Profile requestOwner){
-		Request request = this.searchRequest(requestOwner);
+	public List <Request> searchRequestsNotResponded(){
+		List <Request> result = new ArrayList<Request>();
+		for (Request current : requests) {
+			if (current.getStatus().equals("initial")) {
+				result.add(current);
+			}
+		}
+		return result;
+	}
+
+	public void confirmRequest(Profile requestOwner) {
+		Request request = this.getRequest(requestOwner);
 		request.setStatus("confirmed");
 	}
-	
-	// нужен ли такой метод? или просто где-то в коде будет вызываться серч и потом сеттер? как правильно?
-	// ?????????????????????
-	public void denyRequest(Profile requestOwner){
-		Request request = this.searchRequest(requestOwner);
+
+	public void denyRequest(Profile requestOwner) {
+		Request request = this.getRequest(requestOwner);
 		request.setStatus("denied");
 	}
+
+	public Comment createComment(Profile owner, String body) {
+		Comment comment = new Comment();
+		comment.setOwner(owner);
+		comment.setBody(body);
+		comment.setDateTime(new Date());
+		comments.add(comment);
+		return comment;
+	}
+
+	/*
+	 * public Request createRequest(Profile owner){ Request request = new
+	 * Request(); request.setOwner(owner); request.setStatus("initial");
+	 * requests.add(request); return request; }
+	 */
 
 	public String getStart() {
 		return start;
@@ -177,5 +200,5 @@ public class Ride {
 			return false;
 		return true;
 	}
-	
+
 }
