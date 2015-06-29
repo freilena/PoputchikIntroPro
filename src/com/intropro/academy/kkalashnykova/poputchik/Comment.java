@@ -9,7 +9,7 @@ public class Comment {
 	private Date dateTime;
 
 	public void viewListOfComments() {
-
+		//TODO
 	}
 
 	public Profile getOwner() {

@@ -5,181 +5,82 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.*;
+
 public class RideList {
 
 	private List<Ride> rides = new ArrayList<Ride>();
+	private static Logger log = LogManager.getLogger(RideList.class);
 
-	public Ride createRide(String start, String finish, Date dateTime,
-			Profile owner) { // делигирование - один класс делигировал все
-								// полномочия другому классу
+	public Ride createRide(String start, String finish, Date dateTime, Profile owner) throws PoputchikAlreadyExistsException {
+		log.info("createRide() started.");
 		if (search(start, finish, dateTime, owner).size() != 0) {
-			throw new PoputchikDomainObjectAlreadyExistsException();
+			log.error("Error in createRide: Failed to create new ride: Ride already exist.");
+			throw new PoputchikAlreadyExistsException("Failed to create new ride: Ride already exist.");
 		}
 		Ride ride = Ride.createRide(start, finish, dateTime, owner);
 		rides.add(ride);
+		log.info("createRide() finished.");
 		return ride;
 	}
 
-	// continue in foreach - не выполнять дальше код из цикла, но взять
-	// следующую итерацию
-
-	public List<Ride> search(String start, String finish,
-			Date dateTime, Profile owner) {
+	public List<Ride> search(String start, String finish, Date dateTime, Profile owner) {
+		log.info("search Ride started.");
 		List<Ride> ridesFound = new ArrayList<Ride>();
 
-		if (dateTime == null && owner == null && start == null
-				&& finish == null) {
+		if (dateTime == null && owner == null && start == null && finish == null) {
 			ridesFound = rides;
-		} else if (dateTime == null && owner != null && start != null
-				&& finish != null) {
+		} else if (dateTime == null && owner != null && start != null && finish != null) {
 			for (Ride ride : rides) {
-				if (ride.getStart().equals(start)
-						&& ride.getFinish().equals(finish)
-						&& ride.getOwner().equals(owner)
-						&& !ride.getStatus().equals("expired")) {
+				if (ride.getStart().equals(start) && ride.getFinish().equals(finish) && ride.getOwner().equals(owner) && !ride.getStatus().equals("expired")) {
 					ridesFound.add(ride);
 				}
 			}
-		} else if (dateTime != null && owner == null && start != null
-				&& finish != null) {
+		} else if (dateTime != null && owner == null && start != null && finish != null) {
 			for (Ride ride : rides) {
-				if (ride.getStart().equals(start)
-						&& ride.getFinish().equals(finish)
-						&& !ride.getStatus().equals("expired")) {
+				if (ride.getStart().equals(start) && ride.getFinish().equals(finish) && !ride.getStatus().equals("expired")) {
 					ridesFound.add(ride);
 				}
 			}
-		} else if (dateTime == null && owner == null && start != null
-				&& finish != null) {
+		} else if (dateTime == null && owner == null && start != null && finish != null) {
 			for (Ride ride : rides) {
-				if (ride.getStart().equals(start)
-						&& ride.getFinish().equals(finish)
-						&& !ride.getStatus().equals("expired")) {
+				if (ride.getStart().equals(start) && ride.getFinish().equals(finish) && !ride.getStatus().equals("expired")) {
 					ridesFound.add(ride);
 				}
 			}
-		} else if (dateTime == null && owner == null && start != null
-				&& finish == null) {
+		} else if (dateTime == null && owner == null && start != null && finish == null) {
 			for (Ride ride : rides) {
-				if (ride.getStart().equals(start)
-						&& !ride.getStatus().equals("expired")) {
+				if (ride.getStart().equals(start) && !ride.getStatus().equals("expired")) {
 					ridesFound.add(ride);
 				}
 			}
-		} else if (dateTime == null && owner == null && start == null
-				&& finish != null) {
+		} else if (dateTime == null && owner == null && start == null && finish != null) {
 			for (Ride ride : rides) {
-				if (ride.getFinish().equals(finish)
-						&& !ride.getStatus().equals("expired")) {
+				if (ride.getFinish().equals(finish) && !ride.getStatus().equals("expired")) {
 					ridesFound.add(ride);
 				}
 			}
-		} else {// dateTime != null && owner != null && start != null && finish
-				// != null)
+		} else {
 			for (Ride ride : rides) {
-				if (ride.getStart().equals(start)
-						&& ride.getFinish().equals(finish)
-						&& ride.getDateTime().equals(dateTime)
-						&& ride.getOwner().equals(owner)
-						&& !ride.getStatus().equals("expired")) {
+				if (ride.getStart().equals(start) && ride.getFinish().equals(finish) && ride.getDateTime().equals(dateTime) && ride.getOwner().equals(owner) && !ride.getStatus().equals("expired")) {
 					ridesFound.add(ride);
 				}
 			}
 		}
-		return ridesFound;
-	}
-
-	public List<Ride> search(Map searchParameters) {
-		boolean firstRide = true;
-		List<Ride> ridesFound = new ArrayList<Ride>();
-		/*
-		 * for (Object key : searchParameters.keySet()) { for (SearchParameters
-		 * parameter : SearchParameters.values()) { if
-		 * (key.equals(parameter.toString())) { for (Ride ride : rides) { if
-		 * (firstRide) { if (ride.getStart().equals( searchParameters.get(key)))
-		 * { ridesFound.add(ride); firstRide = false; } } else { if
-		 * (!ridesFound.contains(ride)) { if (ride.getStart().equals(
-		 * searchParameters.get(key))) { ridesFound.add(ride); } } } } } } }
-		 */
-		for (Object key : searchParameters.keySet()) {
-			if (key.equals(SearchParameters.start.toString())) {
-				for (Ride ride : rides) {
-					if (firstRide) {
-						if (ride.getStart().equals(searchParameters.get(key))) {
-							ridesFound.add(ride);
-							firstRide = false;
-						}
-					} else {
-						if (!ridesFound.contains(ride)) {
-							if (ride.getStart().equals(
-									searchParameters.get(key))) {
-								ridesFound.add(ride);
-							}
-						}
-					}
-				}
-			} else if (key.equals(SearchParameters.finish.toString())) {
-				for (Ride ride : rides) {
-					if (firstRide) {
-						if (ride.getFinish().equals(searchParameters.get(key))) {
-							ridesFound.add(ride);
-							firstRide = false;
-						}
-					} else {
-						if (!ridesFound.contains(ride)) {
-							if (ride.getFinish().equals(
-									searchParameters.get(key))) {
-								ridesFound.add(ride);
-							}
-						}
-					}
-				}
-			} else if (key.equals(SearchParameters.datetime.toString())) {
-				for (Ride ride : rides) {
-					if (firstRide) {
-						if (ride.getDateTime().equals(searchParameters.get(key))) {
-							ridesFound.add(ride);
-							firstRide = false;
-						}
-					} else {
-						if (!ridesFound.contains(ride)) {
-							if (ride.getDateTime().equals(
-									searchParameters.get(key))) {
-								ridesFound.add(ride);
-							}
-						}
-					}
-				}
-			} else if (key.equals(SearchParameters.owner.toString())) {
-				for (Ride ride : rides) {
-					if (firstRide) {
-						if (ride.getOwner().equals(searchParameters.get(key))) {
-							ridesFound.add(ride);
-							firstRide = false;
-						}
-					} else {
-						if (!ridesFound.contains(ride)) {
-							if (ride.getOwner().equals(
-									searchParameters.get(key))) {
-								ridesFound.add(ride);
-							}
-						}
-					}
-				}
-			}
-		}
+		log.info("search Ride finished.");
 		return ridesFound;
 	}
 
 	public boolean deleteRide(Ride ride) {
 		if (rides.contains(ride)) {
 			rides.remove(ride);
+			log.info("Ride successfully deleted.");
 			return true;
 		} else {
-			// to do some code here
+			// TODO some code here
+			log.info("Ride was not deleted.");
 			return false;
 		}
-		// Должен ли делит что-то возвращать?
 	}
 
 	public List<Ride> getRides() {

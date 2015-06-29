@@ -3,10 +3,10 @@ package com.intropro.academy.kkalashnykova.poputchik;
 public class Request {
 	
 	private Profile owner;
-	private String status;
+	private RequestStatus status;
 	
 	public void notifyRequest(){
-		//NOT implemented yet
+		//TODO NOT implemented yet
 	}
 
 	public Profile getOwner() {
@@ -17,12 +17,12 @@ public class Request {
 		this.owner = owner;
 	}
 
-	public String getStatus() {
+	public RequestStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setStatus(RequestStatus initial) {
+		this.status = initial;
 	}
 	
 	

@@ -2,26 +2,32 @@ package com.intropro.academy.kkalashnykova.poputchik;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Message {
-	
+
 	private Profile from;
 	private Profile to;
 	private Date dateTime;
 	private String body;
-	private String status;
-	
-	public static Message createMessage(Profile from, Profile to, String body){
+	private MessageStatus status;
+	private static Logger log = LogManager.getLogger(RideList.class);
+
+	public static Message createMessage(Profile from, Profile to, String body) {
+		log.info("createMessage() started.");
 		Message message = new Message();
 		message.setFrom(from);
 		message.setTo(to);
 		message.setDateTime(new Date());
 		message.setBody(body);
-		message.setStatus("unread");
+		message.setStatus(MessageStatus.unread);
+		log.info("New message successfully created.");
 		return message;
 	}
-	
-	public void notifyReviever(){
-		
+
+	public void notifyReviever() {
+
 	}
 
 	public Profile getFrom() {
@@ -56,12 +62,12 @@ public class Message {
 		this.body = body;
 	}
 
-	public String getStatus() {
+	public MessageStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setStatus(MessageStatus unread) {
+		this.status = unread;
 	}
 
 	@Override
@@ -69,8 +75,7 @@ public class Message {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((body == null) ? 0 : body.hashCode());
-		result = prime * result
-				+ ((dateTime == null) ? 0 : dateTime.hashCode());
+		result = prime * result + ((dateTime == null) ? 0 : dateTime.hashCode());
 		result = prime * result + ((from == null) ? 0 : from.hashCode());
 		result = prime * result + ((to == null) ? 0 : to.hashCode());
 		return result;
@@ -108,5 +113,4 @@ public class Message {
 		return true;
 	}
 
-	
 }
