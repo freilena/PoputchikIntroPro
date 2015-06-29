@@ -10,6 +10,7 @@ public class Comment {
 
 	public void viewListOfComments() {
 		//TODO
+		
 	}
 
 	public Profile getOwner() {
