@@ -75,6 +75,7 @@ public class RideList {
 	public boolean deleteRide(Ride ride) {
 		if (rides.contains(ride)) {
 			rides.remove(ride);
+			RideDao.deleteRide(ride.getId);
 			log.info("Ride successfully deleted.");
 			return true;
 		} else {

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 public class Ride {
 
+	//TODO private int id;
 	private String start;
 	private String finish;
 	private Date dateTime;

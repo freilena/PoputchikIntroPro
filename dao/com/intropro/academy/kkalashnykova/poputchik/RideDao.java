@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -75,12 +76,14 @@ public class RideDao {
 		Statement st = null;
 		ResultSet rs = null;
 		
+		ResourceBundle rb = ResourceBundle.getBundle("connection");
 		PreparedStatement insertRide = null;
-		String insertString = "INSERT INTO poputchik_postgres.ride(start_location, finish_location, start_datetime, status) VALUES (?, ?, ?, ?)";
+		String insertString = "INSERT INTO " + rb.getString("schema") + ".ride(start_location, finish_location, start_datetime, status) VALUES (?, ?, ?, ?)";
 		
 		try{
 			PostgresDao.setClassForName();
-			con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/poputchik","postgres", "postpassw0rd");
+			con = DriverManager.getConnection("jdbc:" + rb.getString("dbms") + "://" + rb.getString("host") + ":" + rb.getString("port") + 
+					"/" + rb.getString("database"), rb.getString("username"), rb.getString("password"));
 			insertRide = con.prepareStatement(insertString);
 			insertRide.setString(1, ride.getStart());
 			insertRide.setString(2, ride.getFinish());
@@ -109,5 +112,46 @@ public class RideDao {
 				}
 			}
 		log.info("Successfully inserted Ride into database.");
+	}
+	
+	public static void deleteRide(int id){
+		log.info("Delete Ride from database started.");
+		Connection con = null;
+		Statement st = null;
+		ResultSet rs = null;
+		
+		ResourceBundle rb = ResourceBundle.getBundle("connection");
+		PreparedStatement deleteRide = null;
+		String deleteString = "DELETE FROM" + rb.getString("schema") + ".ride WHERE ride_id = ?";
+		
+		try{
+			PostgresDao.setClassForName();
+			con = DriverManager.getConnection("jdbc:" + rb.getString("dbms") + "://" + rb.getString("host") + ":" + rb.getString("port") + 
+					"/" + rb.getString("database"), rb.getString("username"), rb.getString("password"));
+			deleteRide = con.prepareStatement(deleteString);
+			deleteRide.setInt(1, id);
+			deleteRide.executeUpdate();
+			log.info("Executed query: " + deleteRide);
+		} catch(SQLException|ClassNotFoundException e ){
+			log.error("Failed to delete a ride via " + deleteRide, e);
+			throw new PoputchikDaoFailedToRead("Failed to delete ride from DB:", e);
+		}
+		finally{
+				try {
+					if(rs != null){
+						rs.close();
+						}
+					if(st != null){
+						st.close();
+						}
+					if(con != null){
+						con.close();
+						}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		log.info("Successfully deleted Ride from database.");
 	}
 }
