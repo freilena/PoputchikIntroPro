@@ -134,7 +134,7 @@ public class RideDao {
 			log.info("Executed query: " + deleteRide);
 		} catch(SQLException|ClassNotFoundException e ){
 			log.error("Failed to delete a ride via " + deleteRide, e);
-			throw new PoputchikDaoFailedToRead("Failed to delete ride from DB:", e);
+			throw new PoputchikDaoFailedToDelete("Failed to delete ride from DB:", e);
 		}
 		finally{
 				try {
