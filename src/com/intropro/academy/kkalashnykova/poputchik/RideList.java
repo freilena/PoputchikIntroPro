@@ -13,14 +13,15 @@ public class RideList {
 	private static Logger log = LogManager.getLogger(RideList.class);
 
 	public Ride createRide(String start, String finish, Date dateTime, Profile owner) throws PoputchikAlreadyExistsException {
-		log.info("createRide() started.");
+		log.info("createRideList started.");
 		if (search(start, finish, dateTime, owner).size() != 0) {
 			log.error("Error in createRide: Failed to create new ride: Ride already exist.");
 			throw new PoputchikAlreadyExistsException("Failed to create new ride: Ride already exist.");
 		}
 		Ride ride = Ride.createRide(start, finish, dateTime, owner);
 		rides.add(ride);
-		log.info("createRide() finished.");
+		RideDao.createRide(ride);
+		log.info("createRideList finished.");
 		return ride;
 	}
 
