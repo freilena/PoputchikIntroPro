@@ -1,0 +1,8 @@
+CREATE TABLE Ride (
+ride_id int,
+start_location varchar(255),
+finish_location varchar(255),
+ride_datetime timestamp,
+owner_id int,
+status varchar(255)
+);
