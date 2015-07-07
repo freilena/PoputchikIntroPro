@@ -20,7 +20,8 @@ public class RideList {
 		}
 		Ride ride = Ride.createRide(start, finish, dateTime, owner);
 		rides.add(ride);
-		RideDao.createRide(ride);
+		RideDao rideDao = new RideDao();
+		rideDao.createRide(ride);
 		log.info("createRideList finished.");
 		return ride;
 	}

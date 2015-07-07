@@ -42,7 +42,6 @@ public class RideDao {
 			st = con.createStatement();
 			rs = st.executeQuery("SELECT start_location FROM poputchik_postgres.ride where ride_id = " + id);
 			rs.next();
-			//result.setStart(rs.getString(1));
 			result.setStart(rs.getString("start_location"));
 			start_location = rs.getString("start_location");
 		} catch(SQLException|ClassNotFoundException e ){
@@ -70,7 +69,7 @@ public class RideDao {
 		
 	}
 	
-	public static void createRide(Ride ride){
+	public void createRide(Ride ride){
 		log.info("Insert Ride into database started.");
 		Connection con = null;
 		Statement st = null;
@@ -82,8 +81,7 @@ public class RideDao {
 		
 		try{
 			PostgresDao.setClassForName();
-			con = DriverManager.getConnection("jdbc:" + rb.getString("dbms") + "://" + rb.getString("host") + ":" + rb.getString("port") + 
-					"/" + rb.getString("database"), rb.getString("username"), rb.getString("password"));
+			con = DriverManager.getConnection(rb.getString("connectionString"), rb.getString("username"), rb.getString("password"));
 			insertRide = con.prepareStatement(insertString);
 			insertRide.setString(1, ride.getStart());
 			insertRide.setString(2, ride.getFinish());
@@ -126,8 +124,7 @@ public class RideDao {
 		
 		try{
 			PostgresDao.setClassForName();
-			con = DriverManager.getConnection("jdbc:" + rb.getString("dbms") + "://" + rb.getString("host") + ":" + rb.getString("port") + 
-					"/" + rb.getString("database"), rb.getString("username"), rb.getString("password"));
+			con = DriverManager.getConnection(rb.getString("connectionString"), rb.getString("username"), rb.getString("password")); 
 			deleteRide = con.prepareStatement(deleteString);
 			deleteRide.setInt(1, id);
 			deleteRide.executeUpdate();
